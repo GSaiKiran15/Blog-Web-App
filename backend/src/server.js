@@ -41,6 +41,17 @@ app.post('/api/login', async (req,res) => {
     }
 })
 
+app.post('/api/post', async (req, res) => {
+    const {title, content} = req.body
+    try{
+        const {rows} = await pool.query("insert into posts(user_id, title, content) values ($1, $2, $3)", [1, title, content])
+        console.log(rows);
+    }
+    catch(err){
+        console.log(err);
+    }
+})
+
 app.listen(8000, function() {
     console.log("Server is running on PORT 8000.");
 })
