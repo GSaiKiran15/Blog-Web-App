@@ -19,15 +19,19 @@ app.post('/api/register', async(req, res) => {
 
 app.post('/api/login', async (req,res) => {
     const {username, password} = req.body
+    console.log(username, password);
+    
     try{
         const {rows} = await pool.query("select username, password_hash from users where username = $1",[username])
-        console.log(rows[0].password_hash, password);
+        // console.log(rows[0].password_hash, password);
         if (rows.length === 0){
             console.log("Invalid Username Or Password")
             res.send("Invalid Username Or Password")
         }
         else if (password === rows[0].password_hash){
             console.log("Login successful");
+            console.log(username, password);
+            
             
             res.send("Login Successful")
         }
@@ -54,4 +58,15 @@ app.post('/api/post', async (req, res) => {
 
 app.listen(8000, function() {
     console.log("Server is running on PORT 8000.");
+})
+
+app.get('/api/user', async (req, res) => {
+    const {username} = req.body
+    console.log(username
+        
+    );
+    
+    const {rows} = await pool.query("select id from users where username = $1", [username])
+    
+    res.json(rows[0])
 })

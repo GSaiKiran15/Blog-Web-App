@@ -6,7 +6,7 @@ import PostBlog from './pages/PostBlog'
 
 const routes = [{
   path: "/",
-  element: <PostBlog/>
+  element: <Login/>
 }]
 
 const router = createBrowserRouter(routes)
