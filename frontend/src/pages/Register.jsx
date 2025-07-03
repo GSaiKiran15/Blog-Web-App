@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {Link, useNavigate} from 'react-router-dom';
-import axios from "axios";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Register(){
 
@@ -10,17 +10,18 @@ export default function Register(){
     const [confirmPassword, setConfirmPassword] = useState("")
     const [error, setError] = useState("")
 
+    const navigate = useNavigate()
+
     async function register(){
         if (password !== confirmPassword){
             setError("Both Passwords must be same!")
             return
         }
-        try{
-            const response = axios.post("/api/register", {username, email, password, confirmPassword})
-            setError(response.error);
-        }
-        catch(err){
-            setError(err.response?.data?.error || err.message)
+         try{
+            await createUserWithEmailAndPassword(getAuth(), email, password);
+            navigate('/login');
+        } catch (e) {
+            setError(e.message)
         }
     }
 
@@ -34,6 +35,7 @@ export default function Register(){
         <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}/>
         <button onClick={register}>Register
         </button>
+        <Link to='/login'>Already have an Account? Log In</Link>
         </>
     )
 

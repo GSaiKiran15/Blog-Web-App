@@ -22,7 +22,7 @@ app.post('/api/login', async (req,res) => {
     console.log(username, password);
     
     try{
-        const {rows} = await pool.query("select username, password_hash from users where username = $1",[username])
+        const {rows} = await pool.query("select id, username, password_hash from users where username = $1",[username])
         // console.log(rows[0].password_hash, password);
         if (rows.length === 0){
             console.log("Invalid Username Or Password")
@@ -30,8 +30,8 @@ app.post('/api/login', async (req,res) => {
         }
         else if (password === rows[0].password_hash){
             console.log("Login successful");
-            console.log(username, password);
-            
+            console.log(rows);
+            // res.json()
             
             res.send("Login Successful")
         }
