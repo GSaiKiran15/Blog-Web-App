@@ -46,12 +46,32 @@ app.post('/api/articles/:id/upvote', async (req, res) => {
     res.json(rows)
 })
 
-app.post('/api/articles/:id/comment', async (req, res) => {
-    const {id} = req.params
-    const {name, comment} = req.body
-    const {rows} = await pool.query('UPDATE posts SET comments = comments || "[{"name":$1,"comment":$2}]"::jsonb WHERE id = $3;', [name, comment, id])
-    res.json(rows)
-})
+app.post('/api/articles/:id/comment', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, comment } = req.body;
+
+    // turn your new comment into a JSON string
+    const newComment = JSON.stringify({ name, comment });
+
+    const { rows } = await pool.query(
+      `
+      UPDATE posts
+      SET comments = array_append(
+        COALESCE(comments, ARRAY[]::jsonb[]),
+        $1::jsonb
+      )
+      WHERE id = $2
+      RETURNING *;
+      `,
+      [ newComment, id ]
+    );
+
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.listen(8000, function() {
     console.log("Server is running on PORT 8000.");
