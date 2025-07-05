@@ -17,7 +17,7 @@ app.post('/api/post', async (req, res) => {
 })
 
 app.get('/api/articles', async (req, res) => {
-    const {rows} = await pool.query("select title, content, likes, comments, created_at from posts")
+    const {rows} = await pool.query("select id, title, content, likes, comments, created_at from posts")
     res.json(rows)
 })
 
@@ -50,22 +50,9 @@ app.post('/api/articles/:id/comment', async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, comment } = req.body;
-
-    // turn your new comment into a JSON string
     const newComment = JSON.stringify({ name, comment });
 
-    const { rows } = await pool.query(
-      `
-      UPDATE posts
-      SET comments = array_append(
-        COALESCE(comments, ARRAY[]::jsonb[]),
-        $1::jsonb
-      )
-      WHERE id = $2
-      RETURNING *;
-      `,
-      [ newComment, id ]
-    );
+    const { rows } = await pool.query(`UPDATE posts SET comments = array_append(COALESCE(comments, ARRAY[]::jsonb[]),$1::jsonb) WHERE id = $2 RETURNING *;`, [ newComment, id ]);
 
     res.json(rows[0]);
   } catch (err) {

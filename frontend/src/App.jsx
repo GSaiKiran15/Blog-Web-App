@@ -4,10 +4,18 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import PostBlog from './pages/PostBlog'
 import { AuthProvider } from './contexts/AuthContext'
+import ArticlesList from './pages/ArticleList'
+// import ArticlesListPage from './pages/ArticlesListPage
+import axios from 'axios'
 
 const routes = [{
   path: "/",
-  element: <Register/>,
+  element: <ArticlesList/>,
+  loader: async function () {
+    const response = await axios.get('/api/articles')
+    const data = response.data
+    return {data}
+  }
   },
   {
     path: "/register",
