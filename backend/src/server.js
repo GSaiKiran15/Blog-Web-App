@@ -24,7 +24,7 @@ app.get('/api/articles', async (req, res) => {
 app.get('/api/articles/:id', async (req, res) => {
     const {id} = req.params
     const {rows} = await pool.query("select title, content, likes, comments, created_at from posts where id = $1", [id])
-    res.json(rows)
+    res.json(rows[0])
 })
 
 app.patch('/api/articles/:id/edit', async (req, res) => {

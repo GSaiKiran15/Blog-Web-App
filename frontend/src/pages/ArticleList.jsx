@@ -9,7 +9,8 @@ export default function ArticlesList() {
           {data.map(a => (
       <Link key={a.title} to={`/articles/${a.id}`}>
         <h3>{a.title}</h3>
-        <p>{a.content[0].substring(0, 150)}</p>
+        <br></br>
+        {/* <p>{a.content.substring(0, 150)}</p> */}
       </Link>
     ))}
         </>

@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import ArticlesList from './pages/ArticleList'
 // import ArticlesListPage from './pages/ArticlesListPage
 import axios from 'axios'
+import ViewFullPost from './pages/ViewFullPost'
 
 const routes = [{
   path: "/",
@@ -28,6 +29,16 @@ const routes = [{
   {
     path: "/post",
     element: <PostBlog/>
+  },
+  {
+    path: '/articles/:id',
+    element: <ViewFullPost/>,
+    loader: async ({params}) => {
+      const {id} = params
+      const {data} = await axios.get(`/api/articles/${id}`)
+      console.log(data);      
+      return data
+    }
   }
 ]
 
