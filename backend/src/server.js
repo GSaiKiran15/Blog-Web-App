@@ -23,7 +23,7 @@ app.get('/api/articles', async (req, res) => {
 
 app.get('/api/articles/:id', async (req, res) => {
     const {id} = req.params
-    const {rows} = await pool.query("select title, content, likes, comments, created_at from posts where id = $1", [id])
+    const {rows} = await pool.query("select id, title, content, likes, comments, created_at from posts where id = $1", [id])
     res.json(rows[0])
 })
 
@@ -40,10 +40,10 @@ app.delete('/api/articles/:id/delete', async (req, res) => {
     res.json(rows)
 })
 
-app.post('/api/articles/:id/upvote', async (req, res) => {
+app.post('/api/articles/:id/like', async (req, res) => {
     const {id} = req.params
-    const {rows} = await pool.query("update posts set likes = likes + 1 where id=$1", [id])
-    res.json(rows)
+    const {rows} = await pool.query("update posts set likes = likes + 1 where id=$1 returning likes", [id])
+    res.json(rows[0].likes)
 })
 
 app.post('/api/articles/:id/comment', async (req, res, next) => {
