@@ -9,7 +9,13 @@ import ArticlesList from './pages/ArticleList'
 import axios from 'axios'
 import ViewFullPost from './pages/ViewFullPost'
 
-const routes = [{
+const routes = [
+  {
+    path: '/',
+    element: <Layout/>,
+    //TODO Add error element
+    children:[
+       {
   path: "/",
   element: <ArticlesList/>,
   loader: async function () {
@@ -40,6 +46,9 @@ const routes = [{
       return data
     }
   }
+    ]
+  }
+ 
 ]
 
 const router = createBrowserRouter(routes)
