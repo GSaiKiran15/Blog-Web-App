@@ -9,7 +9,8 @@ app.post('/api/post', async (req, res) => {
     const {title, content} = req.body
     try{
         const {rows} = await pool.query("insert into posts(user_id, title, content) values ($1, $2, $3)", [1, title, content])
-        console.log(rows);
+        const data = await pool.query(`select * from posts where user_id = $1 and title = $2`, [1, title])
+        res.json(data.rows[0].id)
     }
     catch(err){
         console.log(err);
@@ -50,15 +51,25 @@ app.post('/api/articles/:id/comment', async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, comment } = req.body;
-    const newComment = JSON.stringify({ name, comment });
-
-    const { rows } = await pool.query(`UPDATE posts SET comments = array_append(COALESCE(comments, ARRAY[]::jsonb[]),$1::jsonb) WHERE id = $2 RETURNING *;`, [ newComment, id ]);
+    const newComment = { name, comment };
+    const { rows } = await pool.query(
+      `
+      UPDATE posts
+      SET comments = 
+        COALESCE(comments, '[]'::jsonb) 
+        || jsonb_build_array($1::jsonb)
+      WHERE id = $2
+      RETURNING *;
+      `,
+      [ JSON.stringify(newComment), id ]
+    );
 
     res.json(rows[0]);
   } catch (err) {
     next(err);
   }
 });
+
 
 app.listen(8000, function() {
     console.log("Server is running on PORT 8000.");

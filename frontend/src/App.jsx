@@ -11,18 +11,13 @@ import ViewFullPost from './pages/ViewFullPost'
 
 const routes = [
   {
-    path: '/',
-    element: <Layout/>,
-    //TODO Add error element
-    children:[
-       {
-  path: "/",
-  element: <ArticlesList/>,
-  loader: async function () {
-    const response = await axios.get('/api/articles')
-    const data = response.data
-    return {data}
-  }
+      path: "/",
+      element: <ArticlesList/>,
+      loader: async function () {
+        const response = await axios.get('/api/articles')
+        const data = response.data
+        return {data}
+      }
   },
   {
     path: "/register",
@@ -46,9 +41,6 @@ const routes = [
       return data
     }
   }
-    ]
-  }
- 
 ]
 
 const router = createBrowserRouter(routes)
